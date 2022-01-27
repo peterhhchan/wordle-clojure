@@ -98,6 +98,7 @@
 
 ;; ~ 182 results
 ;; (["eland" "riots"] ["enrol" "staid"] ["salon" "tried"] ["salon" "tired"] ["saint" "older"])
+(comment (["alert" "sonic"] ["alert" "scion"] ["alter" "sonic"] ["alter" "scion"] ["ascot" "liner"] ["antic" "loser"] ["acorn" "islet"] ["resin" "octal"] ["renal" "stoic"] ["risen" "octal"] ["rinse" "octal"] ["octal" "resin"] ["octal" "risen"] ["octal" "rinse"] ["octal" "siren"] ["trail" "scone"] ["train" "close"] ["trial" "scone"] ["trice" "salon"] ["learn" "stoic"]))
 (defn starting-guesses []
   (let [ws    (wordlist)
         words (set (clojure.string/split-lines ws))]
@@ -109,7 +110,7 @@
                        w2 (apply str (drop 5 ls))]
                    (when (and (words w1) (words w2))
                      [w1 w2]))))
-         (take 10))))
+         (take 20))))
 
 ;; Run time ~800s or 13 minutes
 (defn simple-first-guess []
