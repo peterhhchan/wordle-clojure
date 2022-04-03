@@ -22,19 +22,17 @@
   (map #(list %1 %2) (range) w))
 
 (defn tf-clue [f clue]
-  (->> (str/lower-case clue)
-      (zip-range)
-      (remove #(= \- (second %)))
-      (map #(tf-char-at f (first %) (second %)))
-      (apply comp)))
-
+  (->> clue
+       (zip-range)
+       (remove #(= \- (second %)))
+       (map #(tf-char-at f (first %) (second %)))
+       (apply comp)))
 
 (defn characters [clues]
-  (let [chars (->> (map str/lower-case clues)
+  (let [chars (->> clues
                    (map set)
                    (apply clojure.set/union))]
     (disj chars \-)))
-
 
 (defn filter-words [words {:keys [correct present wrong]}]
   (sequence (comp (tf-clue filter correct)
@@ -48,25 +46,24 @@
   (let [w (set word)]
     {:correct (str/join (map (fn [a b] (if (= a b) a "-")) word guess))
      :present [(str/join (map (fn [a b] (if (and (not= a b) (w b)) b "-")) word guess))]
-     :wrong   (str/join (remove w guess))}))
+     :wrong   [(str/join (remove w guess))]}))
 
 (defn best-guess [words guesses n]
   (if (zero? n)
     [(count words) nil]
     (case (count words)
-      2 [2 (first words)]
       1 [1 (first words)]
+      2 [2 (first words)]
       (->> words
            (pmap (fn [g]
-                  [(transduce (map  (fn [w]
-                                       (if (= w g)
-                                         1
-                                         (let [words*   (-> (filter-words words (clue w g))
-                                                            set
-                                                            (disj g))]
-                                           (first (best-guess words* words* (dec n) ))))))
-                               +
-                               words)
+                  [(transduce (map (fn [w]
+                                     (if (= w g)
+                                       1
+                                       (let [words* (-> (filter-words words (clue w g))
+                                                        set
+                                                        (disj g))]
+                                         (first (best-guess words* words* (dec n)))))))
+                               + words)
                    g]))
            (apply min-key first)))))
 
@@ -74,7 +71,7 @@
   ;; still a bug here, the clues indicate there should be at least 2 'e's in the word
   (let [clues {:correct "-e"
                :present ["-r" "----e"]
-               :wrong "pylonc"}
+               :wrong ["pylonc"]}
         words (filter-words answers clues)]
     (prn (count words) words)
     (best-guess words words 6)))
