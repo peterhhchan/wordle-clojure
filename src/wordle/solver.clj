@@ -57,16 +57,17 @@
       2 [2 (first words)]
       1 [1 (first words)]
       (->> words
-           (map (fn [g]
-                  [(->> words
-                        (pmap (fn [w]
-                                (if (= w g)
-                                  1
-                                  (let [words*   (-> (filter-words words (clue w g))
-                                                     set
-                                                     (disj g))]
-                                    (first (best-guess words* words* (dec n) ))))))
-                        (reduce +)) g]))
+           (pmap (fn [g]
+                  [(transduce (map  (fn [w]
+                                       (if (= w g)
+                                         1
+                                         (let [words*   (-> (filter-words words (clue w g))
+                                                            set
+                                                            (disj g))]
+                                           (first (best-guess words* words* (dec n) ))))))
+                               +
+                               words)
+                   g]))
            (apply min-key first)))))
 
 (defn example-1 []
