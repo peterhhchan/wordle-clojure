@@ -1,7 +1,6 @@
-(ns wardle.core
+(ns wordle.core
   (:require [clojure.math.combinatorics :as combo]
             [clojure.java.io :as io]))
-
 
 ;;;;
 ;; Dictionaries
